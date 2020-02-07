@@ -1,12 +1,21 @@
-M = 1;
+M = 1000000;
+m = 1;
 L = 1;
-q = sym('p', [3,1]);
-dq = sym('dp',[3,1]);
+q = sym('p', [3,1], 'Real');
+dq = sym('dp',[3,1],'Real');
 
-Lagrangian = 0.5*M*L^2*(2*dq(2)^2+dq(3)^2+cos(q(2)-q(3))*dq(2)*dq(3)+dq(1)^2)+M*9.81*L*(2*cos(q(2))+cos(q(3)));
+x_th1_dot = -l*cos(q(2)
+
+Lagrangian = 0.5*M*L^2*(2*dq(2)^2+dq(3)^2+cos(q(2)-q(3))*dq(2)*dq(3))+0.5*m*dq(1)^2+M*9.81*L*(2*cos(q(2))+cos(q(3)))
++0.5*m*(dq(1)^2-dq(1))+0.5*M*L*(cos(q(2))*dq(2)+cos(q(3))*dq(3));
 
 LagDDiff_dq = jacobian(jacobian(Lagrangian,dq),dq);
 
-LagDiff_q = jacobian(Lagrangian,q);
+LagDiff_q = jacobian(Lagrangian,q)';
 
-state
+LagDiff_dq_q = jacobian(LagDiff_q,dq);
+Q = [0;0;0];
+state_dot = [dq;inv(LagDDiff_dq)*(Q + LagDiff_q-LagDiff_dq_q*dq)];
+state = [q;dq];
+syms t
+matlabFunction(state_dot,'File', 'TestFunc.m', 'vars', {t,state})

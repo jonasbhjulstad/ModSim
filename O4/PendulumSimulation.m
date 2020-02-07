@@ -5,16 +5,16 @@ clc
 % Parameters and initial states
 tf = 10;
 % parameters =
- state = [1,0,0,0,0,0]';
+ state = [0,pi/2,pi/2,0,0,0.001]';
 M = 1;
 L = 1;
 % Simulation
 try
 
     %%%%%% MODIFY THE CODE AS YOU SEE FIT
-    opts = odeset('RelTol', 1e-6, 'AbsTol', 1e-6);
+    opts = odeset('OutputFcn', 'odeplot', 'RelTol', 1e-3, 'AbsTol', 1e-10);
     
-    [tsim,xsim] = ode45(@(t,x)PendulumDynamics(t, x),[0,tf],state, opts);
+    [tsim,xsim] = ode23s(@(t,x)TestFunc(t, x),[0,tf],state,opts);
 
 catch message
     display('Your simulation failed with the following message:')
@@ -71,7 +71,7 @@ SimSpeed = 1;
     x = x_disp(1,1); % position cart
     th1 = x_disp(2,1);
     th2 = x_disp(3,1);
-    p1 = L*[-sin(th1);-cos(th1)]; % position 1st ball
+    p1 = L*[-sin(th1)+x;-cos(th1)]; % position 1st ball
     p2 = p1 + L*[-sin(th1)-sin(th2);-cos(th1)-cos(th2)]; % position 2nd ball
 
     % Input argument for DrawPendulm
